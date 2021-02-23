@@ -1,0 +1,83 @@
+image: registry.cn-shanghai.aliyuncs.com/wingoht-yiyun/node-openssh:10.15.3-stretch-slim
+
+variables:
+  PROJECT_NAME: organizationrelation
+
+stages:
+  - build&deploy
+
+build&deploy_test:
+  only:
+    - /^test.*$/@TSESCloud/Front/web-organizationrelation
+  stage: build&deploy
+  script:
+    - npm config set registry https://registry.npm.taobao.org
+    - npm config set sass_binary_site https://npm.taobao.org/mirrors/node-sass/
+    - npm install
+    - npm run build-test
+    #检测ssh-agent
+    - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+    - eval $(ssh-agent -s)
+    - ssh-add <(echo "$SSH_PRIVATE_KEY")
+    - mkdir -p ~/.ssh
+    - '[[ -f /.dockerenv ]] && echo -e "Host *\\n\\tStrictHostKeyChecking no\\n\\n" > ~/.ssh/config'
+    - "ssh root@192.168.200.4 \"rm -rf /home/Yiyun/nginx/html/www/pc/$PROJECT_NAME\""
+    - "ssh root@192.168.200.4 \"mkdir -p /home/Yiyun/nginx/html/www/pc/$PROJECT_NAME\""
+    - "scp -r dist/* root@192.168.200.4:/home/Yiyun/nginx/html/www/pc/$PROJECT_NAME"
+
+build&deploy_version:
+  only:
+    - /^v.*$/@TSESCloud/Front/web-organizationrelation
+  stage: build&deploy
+  script:
+    - mkdir -p ../$CI_COMMIT_REF_NAME/staging/pc/$PROJECT_NAME
+    - mkdir -p ../$CI_COMMIT_REF_NAME/production/pc/$PROJECT_NAME
+    - mkdir -p ../$CI_COMMIT_REF_NAME/webres/$PROJECT_NAME/static
+    - npm config set registry https://registry.npm.taobao.org
+    - npm config set sass_binary_site https://npm.taobao.org/mirrors/node-sass/
+    - npm install
+    - npm run build-staging
+    - cp -r ./dist/* ../$CI_COMMIT_REF_NAME/staging/pc/$PROJECT_NAME
+    - npm run build-production
+    - cp -r ./dist/* ../$CI_COMMIT_REF_NAME/production/pc/$PROJECT_NAME
+    - cp -r ./dist/static/* ../$CI_COMMIT_REF_NAME/webres/$PROJECT_NAME/static
+    - npm run build-ptest
+    #检测ssh-agent
+    - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+    - eval $(ssh-agent -s)
+    - ssh-add <(echo "$SSH_PRIVATE_KEY")
+    - mkdir -p ~/.ssh
+    - '[[ -f /.dockerenv ]] && echo -e "Host *\\n\\tStrictHostKeyChecking no\\n\\n" > ~/.ssh/config'
+    #部署ptest
+    - "ssh root@192.168.200.4 \"rm -rf /home/nginx-wg/html/www-ptest/pc/$PROJECT_NAME\""
+    - "ssh root@192.168.200.4 \"mkdir -p /home/nginx-wg/html/www-ptest/pc/$PROJECT_NAME\""
+    - "scp -r ./dist/* root@192.168.200.4:/home/nginx-wg/html/www-ptest/pc/$PROJECT_NAME"
+    #缓存version包
+    - "ssh root@192.168.200.6 \"mkdir -p /home/webapp\""
+    - "scp -r ../$CI_COMMIT_REF_NAME root@192.168.200.6:/home/webapp"
+    
+build&deploy_fuling:
+  only:
+    - /^fuling.*$/@TSESCloud/Front/web-organizationrelation
+  stage: build&deploy
+  script:
+    - npm config set registry https://registry.npm.taobao.org
+    - npm config set sass_binary_site https://npm.taobao.org/mirrors/node-sass/
+    - npm install
+    - npm run build-fuling
+  artifacts:
+    paths:
+      - ./dist/*
+
+build&deploy_huawei:
+  only:
+    - /^huawei.*$/@TSESCloud/Front/web-organizationrelation
+  stage: build&deploy
+  script:
+    - npm config set registry https://registry.npm.taobao.org
+    - npm config set sass_binary_site https://npm.taobao.org/mirrors/node-sass/
+    - npm install
+    - npm run build-huawei
+  artifacts:
+    paths:
+      - ./dist/*

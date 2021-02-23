@@ -1,0 +1,65 @@
+{
+  "name": "relationship",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "lint": "vue-cli-service lint",
+    "build-production": "vue-cli-service build --mode production",
+    "build-ptest": "vue-cli-service build --mode ptest",
+    "build-staging": "vue-cli-service build --mode staging",
+    "build-test": "vue-cli-service build --mode test"
+  },
+  "dependencies": {
+    "axios": "^0.21.1",
+    "core-js": "^3.6.5",
+    "js-md5": "^0.7.3",
+    "less": "^4.1.0",
+    "less-loader": "^7.3.0",
+    "moment": "^2.29.1",
+    "style-resources-loader": "^1.4.1",
+    "sync-request": "^6.1.0",
+    "vue": "^2.6.11",
+    "vue-axios": "^3.2.2",
+    "vue-cli-plugin-style-resources-loader": "^0.1.4",
+    "vue-router": "^3.2.0",
+    "vuex": "^3.4.0",
+    "yiyun-components": "^1.9.40"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "~4.5.0",
+    "@vue/cli-plugin-eslint": "~4.5.0",
+    "@vue/cli-plugin-router": "~4.5.0",
+    "@vue/cli-plugin-vuex": "~4.5.0",
+    "@vue/cli-service": "~4.5.0",
+    "@vue/eslint-config-standard": "^5.1.2",
+    "babel-eslint": "^10.1.0",
+    "eslint": "^6.7.2",
+    "eslint-plugin-import": "^2.20.2",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.0",
+    "eslint-plugin-vue": "^6.2.2",
+    "vue-happy-scroll": "^2.1.1",
+    "vue-template-compiler": "^2.6.11"
+  },
+  "eslintConfig": {
+    "root": true,
+    "env": {
+      "node": true
+    },
+    "extends": [
+      "plugin:vue/essential",
+      "@vue/standard"
+    ],
+    "parserOptions": {
+      "parser": "babel-eslint"
+    },
+    "rules": {}
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ]
+}
